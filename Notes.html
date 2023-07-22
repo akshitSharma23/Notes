@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>self Notes</title>
+    <script src="https://kit.fontawesome.com/5a47930f18.js" crossorigin="anonymous"></script>
+
+    <style>
+        body{
+            padding:0;
+            margin:0;
+        }
+        .nav{
+            background-color: rgb(255, 230, 0);
+            height:100px;
+            display: flex;
+            padding:10px;
+            font-size: 80px;
+        }
+        p{
+            padding:0;
+            margin:0;
+        }
+        .add{
+            display: flex;
+            justify-content: end;
+            font-size: 30px;
+            margin-top:1%;
+            padding:0 5% 0 0;
+        }
+        .addBtn{
+            display: flex;
+            background-color:#ffff;
+            border-radius: 70px;
+            width:17%;
+            justify-content: center;
+        }
+        .addBtn:hover{
+            display: flex;
+            background-color:rgb(255, 230, 0);
+            border-radius: 70px;
+            width:17%;
+            transition: 0.7s;
+            justify-content: center;
+        }
+        #btn{
+            font-size:30px;
+            border-radius:100px;
+            margin:0 10px 0 0;
+            border:none;
+            background-color: rgb(255, 230, 0);
+        }
+        .fa{
+            color:white;
+            width:20px;
+        }
+        .notes{
+            display: flex;
+            flex-wrap:wrap;
+            /* justify-content: space-around; */
+        }
+        .textBtn{
+            display: flex;
+            justify-content: end;
+        }
+        .areaBtn{
+            border:none;
+            border-radius: 50px;
+        }
+        .one{
+            color:green;
+            background-color: #ffff;
+        }.one:hover{
+            color:#ffff;
+            transition: 0.7s;
+            background-color: green;
+        }
+        .two{
+            color:red;
+            background-color: #ffff;
+        }
+        .two:hover{
+            color:#ffff;
+            transition: 0.7s;
+            background-color: red;
+        }
+        .area{
+            border:none;
+            text-align: center;
+        }
+        .areaDiv{
+            display: flex;
+            height:162px;
+            width:220px;
+            overflow: scroll;
+        }
+        .box{
+            border:solid grey;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin:1%;
+        }.hidden{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <p><i class="fa-solid fa-file"></i> AKS Keep</p>
+    </div> 
+    <div class="add">
+        <div class="addBtn">
+            <button id="btn"><i class="fa fa-solid fa-angle-right" ></i></button>
+            <label>ADD NOTES</label>
+        </div>
+    </div>
+    <div class="notes">
+        
+    </div>
+</body>
+<script>
+    const htmlData=(text)=>{
+        return `<div class="box">
+                <div class="textBtn">
+                    <button class="areaBtn one" onclick=edit(this)><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="areaBtn two" onclick=trash(this)><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <div class="text" value="">
+                    <div class="areaDiv ${(text)?"":"hidden"}">${text}</div>
+                    <textarea class="area ${(text)?"hidden":""}" onchange=change(this) rows="10" cols="25" placeholder="Enter the Text">${text}</textarea>
+                    <p></p>
+                </div>
+            </div>`
+    };
+    const LSD=()=>{
+        let arr=document.querySelectorAll(".area");
+        let data=[];
+        arr.forEach((ele) => {
+            data.push(ele.value);
+        });
+        console.log(data);
+        localStorage.setItem('data',JSON.stringify(data)); 
+    }
+    document.querySelector(".addBtn").addEventListener("mousemove",function(){
+        document.querySelector(".fa").className="fa fa-sharp fa-solid fa-arrow-right";
+    });
+    document.querySelector(".addBtn").addEventListener("mouseout",function(){
+        document.querySelector(".fa").className="fa fa-solid fa-angle-right";
+    });
+    document.querySelector(".addBtn").addEventListener("click",function(){
+        document.querySelector(".notes").insertAdjacentHTML("beforeend",htmlData(""));
+    });
+    const trash=(element)=>{
+        let data=element.closest(".box").querySelector(".area").innerHTML;
+        let arr=JSON.parse(localStorage.getItem("data"));
+        console.log(arr);
+        localStorage.removeItem("data");
+        let val=arr.filter((ele)=>{
+            return ele!=data;
+        });
+        console.log(val);
+        localStorage.setItem("data",JSON.stringify(val));
+        element.closest(".box").remove();
+    };
+    const textValue=(event)=>{
+        const ele=event.closest(".box").querySelector(".text");
+        let val=ele.querySelector(".area").value;
+        ele.querySelector(".areaDiv").innerHTML =val;
+        ele.querySelector(".area").classList.toggle("hidden");
+        ele.querySelector(".areaDiv").classList.toggle("hidden");
+    }
+    const edit=(event)=>{
+        textValue(event);
+    };
+    const change=(event)=>{
+        textValue(event);
+        LSD();
+    };
+    const data=JSON.parse(localStorage.getItem("data"));
+    if(data){
+        data.forEach((ele) => {
+            console.log(ele);
+            document.querySelector(".notes").insertAdjacentHTML("beforeend",htmlData(ele));
+        });
+    }
+</script>
+</html>
+
+
+
+<!-- <i class="fa-solid fa-angle-right"></i> -->
+<!-- <i class="fa-sharp fa-solid fa-arrow-right"></i> -->
